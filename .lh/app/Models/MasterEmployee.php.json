@@ -1,0 +1,18 @@
+{
+    "sourceFile": "app/Models/MasterEmployee.php",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1697247613196,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1697247613196,
+            "name": "Commit-0",
+            "content": "<?php\n\n/**\n * Created by Reliese Model.\n */\n\nnamespace App\\Models;\n\nuse Carbon\\Carbon;\nuse Illuminate\\Database\\Eloquent\\Model;\n\n/**\n * Class MasterEmployee\n * \n * @property int $id\n * @property string $name\n * @property Carbon $join_date\n * @property Carbon $birth_date\n * @property string $status\n *\n * @package App\\Models\n */\nclass MasterEmployee extends Model\n{\n\tprotected $table = 'master_employee';\n\tpublic $timestamps = false;\n\n\tprotected $casts = [\n\t\t'join_date' => 'datetime',\n\t\t'birth_date' => 'datetime'\n\t];\n\n\tprotected $fillable = [\n\t\t'name',\n\t\t'join_date',\n\t\t'birth_date',\n\t\t'address',\n\t\t'city',\n\t\t'phone',\n\t\t'devisi',\n\t\t'status'\n\t];\n}"
+        }
+    ]
+}
