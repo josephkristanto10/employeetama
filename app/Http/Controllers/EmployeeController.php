@@ -237,7 +237,7 @@ class EmployeeController extends Controller
         $data  =
         DB::select(
             DB::raw('
-            select master_bonus_panen.*, SUM(detail_bonus_panen.bonus) as jumlahtotal from `master_bonus_panen` left join `detail_bonus_panen` on `detail_bonus_panen`.`id_master_bonus_panen` = `master_bonus_panen`.`id` group by `master_bonus_panen`.`id`;
+            select master_bonus_panen.*, ifnull(SUM(detail_bonus_panen.bonus),0) as jumlahtotal from `master_bonus_panen` left join `detail_bonus_panen` on `detail_bonus_panen`.`id_master_bonus_panen` = `master_bonus_panen`.`id` group by `master_bonus_panen`.`id`;
             ')
         );
         return DataTables::of($data)->make(true);
@@ -296,7 +296,7 @@ class EmployeeController extends Controller
         $data  =
         DB::select(
             DB::raw('
-            select master_bonus_panen_live.*, SUM(detail_bonus_panen_live.bonus) as jumlahtotal from `master_bonus_panen_live` left join `detail_bonus_panen_live` on `detail_bonus_panen_live`.`id_master_bonus_panen` = `master_bonus_panen_live`.`id` group by `master_bonus_panen_live`.`id`;
+            select master_bonus_panen_live.*, ifnull(SUM(detail_bonus_panen_live.bonus),0) as jumlahtotal from `master_bonus_panen_live` left join `detail_bonus_panen_live` on `detail_bonus_panen_live`.`id_master_bonus_panen` = `master_bonus_panen_live`.`id` group by `master_bonus_panen_live`.`id`;
             ')
         );
         return DataTables::of($data)->make(true);

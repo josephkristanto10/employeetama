@@ -259,13 +259,13 @@
                   </div>
                   <div class ="row mt-2">
                       <div class ="col-md-6">Lokasi Panen <br><input class = "form-control" name = "input_lokasi_panen"></div>
-                      <div class ="col-md-6">Petak Panen <br><input class = "form-control" name = "input_petak_panen" value = "0"></div>
+                      <div class ="col-md-6">Petak Panen <br><input class = "form-control" name = "input_petak_panen" ></div>
                   </div>
                   <div class ="row mt-2">
-                      <div class ="col-md-6">Berat (kg) <br><input class = "form-control" name = "input_berat" value = "0"></div>
-                      <div class ="col-md-6">Total Berat <br><input class = "form-control" name = "input_total_berat" value = "0"></div>
+                      <div class ="col-md-6">Berat (kg) <br><input class = "form-control" name = "input_berat"></div>
+                      <div class ="col-md-6">Total Berat <br><input class = "form-control" name = "input_total_berat" ></div>
                   </div>
-                  <div class ="row mt-2"><div class ="col-md-12">Detail <br><input class = "form-control" name = "input_detail" value = "0"></div></div>
+                  <div class ="row mt-2"><div class ="col-md-12">Detail <br><input class = "form-control" name = "input_detail"></div></div>
                   <div class ="row mt-3" ><div class ="col-md-12"><input  class="btn btn-primary" style = "width:100%;" value = "Submit" onclick = "add_master_bonus_panen(event)"></div></div>
                   </form>
                   <hr>
