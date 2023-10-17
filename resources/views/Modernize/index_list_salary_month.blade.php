@@ -268,7 +268,9 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap.min.js"></script>
+
 <script>
+ 
   $(".inputwiththousandseparaor").keyup(function (event) { 
         if ($.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
             return; 
@@ -305,6 +307,10 @@
   }
   
   $(document).ready(function () {
+    function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
     var tls = $('#table_list_salary').DataTable({
       processing: true,
       serverSide: true,
@@ -329,22 +335,27 @@
            data: 'period'
         },
         {
-           data: 'jumlahtotal'
+           data: 'jumlahtotal',
+            render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         },
         {
-           data: 'beginning_balance'
+           data: 'beginning_balance',
+            render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         },
         {
-           data: 'incoming_cash'
+           data: 'incoming_cash',
+            render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         },
         {
            data: 'tanggal_kas_masuk'
         },
         {
-           data: 'cash_total'
+           data: 'cash_total',
+            render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         },
         {
-           data: 'remaining_balance'
+           data: 'total_remaining_balance',
+            render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         },
         {
            data: 'detail'

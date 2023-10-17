@@ -10,6 +10,7 @@ use App\Models\MasterBonusPanen;
 use App\Models\MasterBonusPanenLive;
 
 use App\Models\DetailBonusPanen;
+use App\Models\DetailBonusPanenLive;
 use App\Models\DetailBonusPanenPekerjaan;
 use App\Models\MasterBonusPanenPekerjaan;
 use Yajra\DataTables\DataTables;
@@ -103,7 +104,7 @@ class EmployeeController extends Controller
         
         $data  =
         DB::select(
-            DB::raw("select master_month.*, SUM(detail_month.total) as jumlahtotal, DATE_FORMAT( master_month.incoming_cash_date, '%d %b %Y') as tanggal_kas_masuk, ((master_month.beginning_balance+incoming_cash) - SUM(detail_month.total)) from master_month left join detail_month on `detail_month`.`id_master_month` = `master_month`.`id` group by `master_month`.`id`")
+            DB::raw("select master_month.*, ifNULL(SUM(detail_month.total),0) as jumlahtotal, DATE_FORMAT( master_month.incoming_cash_date, '%d %b %Y') as tanggal_kas_masuk, IFNULL(((master_month.beginning_balance+incoming_cash) - SUM(detail_month.total)), master_month.beginning_balance)  as total_remaining_balance  from master_month left join detail_month on `detail_month`.`id_master_month` = `master_month`.`id` group by `master_month`.`id`")
         );
         return DataTables::of($data)->make(true);
     }

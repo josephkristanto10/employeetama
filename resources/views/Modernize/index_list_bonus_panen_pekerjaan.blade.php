@@ -510,7 +510,8 @@
                     return data;}
         },
         {
-           data: 'jumlahtotal'
+           data: 'jumlahtotal',
+           render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         },
         {
           data: 'detail'
@@ -587,10 +588,12 @@
            data: 'jumlah_hari'
         },
         {
-           data: 'bonus_per_day'
+           data: 'bonus_per_day',
+           render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         },
         {
-           data: 'take_home_pay'
+           data: 'take_home_pay',
+           render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         }
         // {
         //    "render": function ( data, type, row ) {

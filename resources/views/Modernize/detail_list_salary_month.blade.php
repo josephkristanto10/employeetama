@@ -431,6 +431,7 @@
     $('#table_list_salary').DataTable({
       processing: true,
       serverSide: true,
+      scrollX:true,
       ajax: {
         url: '{{route('detailsalary')}}',
         data : {
@@ -450,35 +451,43 @@
            data: 'devisi'
         },
         {
-           data: 'salary_per_day'
+           data: 'salary_per_day',
+           render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         },
         {
            data: 'work_duration'
         },
         {
-           data: 'total_honor_per_week'
+           data: 'total_honor_per_week',
+           render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         },
         {
-           data: 'honor_day'
+           data: 'honor_day',
+           render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         },
         {
            data: 'total_piket_day'
         },
         {
-           data: 'total_honor_picket'
+           data: 'total_honor_picket',
+           render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         },
         {
-           data: 'extra'
+           data: 'extra',
+           render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         },
         {
-           data: 'total_honor_received'
+           data: 'total_honor_received',
+           render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         },
         {
-           data: 'tunjangan'
+           data: 'tunjangan',
+           render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         }
         ,
         {
-           data: 'total'
+           data: 'total',
+           render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         }
       ],
     });

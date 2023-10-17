@@ -491,7 +491,8 @@
            data: 'total_weight'
         },
         {
-           data: 'jumlahtotal'
+           data: 'jumlahtotal',
+           render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' ),
         },
         {
           data: 'detail'
@@ -567,7 +568,8 @@
            data: 'devisi'
         },
         {
-           data: 'bonus'
+           data: 'bonus',
+           render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         },
         {
            "render": function ( data, type, row ) {
