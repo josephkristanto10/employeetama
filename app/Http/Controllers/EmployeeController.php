@@ -10,7 +10,8 @@ use App\Models\MasterBonusPanen;
 use App\Models\MasterBonusPanenLive;
 
 use App\Models\DetailBonusPanen;
-use App\Models\DetailBonusPanenLive;
+use App\Models\DetailBonusPanenPekerjaan;
+use App\Models\MasterBonusPanenPekerjaan;
 use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
 use DB;
@@ -208,6 +209,15 @@ class EmployeeController extends Controller
             return redirect('/Login');
         }
     }
+    public function indexbonuspanenpekerjaan(Request $request){
+        if(session("login")){
+            $list_all_employee = MasterEmployee::all();
+            return view("Modernize.index_list_bonus_panen_pekerjaan", compact('list_all_employee'));
+        }
+        else{
+            return redirect('/Login');
+        }
+    }
     public function indexbonuspanenlive(Request $request){
         if(session("login")){
             $list_all_employee = MasterEmployee::all();
@@ -232,6 +242,40 @@ class EmployeeController extends Controller
         return DataTables::of($data)->make(true);
   
     }
+    public function listdetailbonuspanenperkerjaan(Request $request){
+        
+        $id_panen = $request->id_month_panen;
+        $detailbonuspanen = DetailBonusPanenPekerjaan::join('master_employee', "master_employee.id",'=',"detail_bonus_panen_pekerjaan.id_employee")->select("*")->where("id_master_bonus_panen_pekerjaan", $id_panen)->get();
+        return DataTables::of($detailbonuspanen)->make(true);
+    }
+    public function list_bonus_panen_pekerjaan(Request $request){
+ 
+        $data  =
+        DB::select(
+            DB::raw('
+            select master_bonus_panen_pekerjaan.*,count(detail_bonus_panen_pekerjaan.id) as jumlahpekerja_detail, SUM(detail_bonus_panen_pekerjaan.take_home_pay) as jumlahtotal from `master_bonus_panen_pekerjaan` left join `detail_bonus_panen_pekerjaan` on `detail_bonus_panen_pekerjaan`.`id_master_bonus_panen_pekerjaan` = `master_bonus_panen_pekerjaan`.`id` group by `master_bonus_panen_pekerjaan`.`id`;
+            ')
+        );
+        return DataTables::of($data)->make(true);
+  
+    }
+    public function add_mastermonth_bonus_panen_pekerjaan(Request $request){
+        $master_panen_pekerjaan = MasterBonusPanenPekerjaan::create([
+            'week' => $request->input_week,
+            'month' => $request->input_month,
+            'year' => $request->input_year,
+            'periode' => $request->input_periode,
+            'keterangan' => $request->input_keterangan,
+            'jumlah_pekerja' => 0,
+            'total_bonus' => 0,
+            'detail' => $request->input_detail,
+        ]);
+
+        return response()->json([
+            'message' => "Success",
+            'status' =>200
+        ]);
+    }
     public function list_detail_bonus_panen(Request $request){
         $id_panen = $request->id_month_panen;
         $detailbonuspanen = DetailBonusPanen::join('master_employee', "master_employee.id",'=',"detail_bonus_panen.id_employee")->select("*")->where("id_master_bonus_panen", $id_panen)->get();
@@ -255,6 +299,39 @@ class EmployeeController extends Controller
             ')
         );
         return DataTables::of($data)->make(true);
+    }
+    // public function  list_panen_bonus_pekerjaan(Request $request){
+    //     $id_month_salary = $request->id_month;
+    //     // $data = MasterBonusPanen::select('*')->where("id_master_month", $id_month_salary)->get();
+    //     // $data = MasterBonusPanen::select(DB::raw('master_bonus_panen.*, SUM("detail_bonus_panen.bonus") as jumlahtotal'))
+    //     //         ->leftJoin('detail_bonus_panen','detail_bonus_panen.id_master_bonus_panen','=','master_bonus_panen.id')
+    //     //         ->groupBy('master_bonus_panen.id')->get();
+    //     $data  =
+    //     DB::select(
+    //         DB::raw('
+    //         select master_bonus_panen_pekerjaan.*, SUM(detail_bonus_panen_pekerjaan.take_home_pay) as jumlahtotal from `master_bonus_panen_pekerjaan` left join `detail_bonus_panen_pekerjaan` on `detail_bonus_panen_pekerjaan`.`id_master_bonus_panen_pekerjaan` = `master_bonus_panen_pekerjaan`.`id` group by `master_bonus_panen_live`.`id`;
+    //         ')
+    //     );
+    //     return DataTables::of($data)->make(true);
+    // }
+    public function add_master_bonus_panen_pekerjaan(Request $request){
+        
+    
+        $id_detail_month = $request->id_master_month;
+        $jumlahhari = $request->input_jumlah_hari;
+        $bonusperhari = $request->input_bonus_per_day;
+        $takehomepay = $jumlahhari * $bonusperhari;
+        $detailpanen = DetailBonusPanenPekerjaan::create([
+            'id_master_bonus_panen_pekerjaan' => $id_detail_month,
+            'id_employee' => $request->input_employee, 
+            'jumlah_hari' => $jumlahhari,
+            'bonus_per_day' => $bonusperhari,
+            'take_home_pay' => $takehomepay,
+        ]);
+        return response()->json([
+            'message' => "Success",
+            'status' =>200
+        ]);
     }
     public function add_master_bonus_panen_hidup(Request $request){
         

@@ -236,7 +236,7 @@
                 <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
                   <div class="mb-3 mb-sm-0">
                     {{-- <h5 class="card-title fw-semibold">Add Bonus Pane Salary </h5> --}}
-                    <h5 class="card-title fw-semibold">Add Bonus Panen Fresh </h5>
+                    <h5 class="card-title fw-semibold">Add Bonus Panen Pekerjaan </h5>
 
                   </div>
                   <span class = "mb-3" style = "float:right;" onclick = "showhide()" style = "cursor:pointer !important;"> Hide / Show</span>
@@ -254,25 +254,24 @@
                   <form id = "addbonuspanen">
                     @csrf
                   <div class ="row mt-2">
-                      <div class ="col-md-6">Tanggal Panen  (Example : 30-05-2023) <br><input class = "form-control" name = "input_tanggal_panen"></div>
-                      <div class ="col-md-6">Buyer <br><input class = "form-control" name = "input_buyer"></div>
+                      <div class ="col-md-6">Week <br><input class = "form-control" name = "input_week"></div>
+                      <div class ="col-md-6">Month <br><input class = "form-control" name = "input_month"></div>
                   </div>
                   <div class ="row mt-2">
-                      <div class ="col-md-6">Lokasi Panen <br><input class = "form-control" name = "input_lokasi_panen"></div>
-                      <div class ="col-md-6">Petak Panen <br><input class = "form-control" name = "input_petak_panen" value = "0"></div>
+                      <div class ="col-md-6">Year <br><input class = "form-control" name = "input_year"></div>
+                      <div class ="col-md-6">Periode <br><input class = "form-control" name = "input_periode" ></div>
                   </div>
                   <div class ="row mt-2">
-                      <div class ="col-md-6">Berat (kg) <br><input class = "form-control" name = "input_berat" value = "0"></div>
-                      <div class ="col-md-6">Total Berat <br><input class = "form-control" name = "input_total_berat" value = "0"></div>
+                      <div class ="col-md-6">Keterangan <br><input class = "form-control" name = "input_keterangan" ></div>
+                      <div class ="col-md-6">Detail <br><input class = "form-control" name = "input_detail" ></div>
                   </div>
-                  <div class ="row mt-2"><div class ="col-md-12">Detail <br><input class = "form-control" name = "input_detail" value = "0"></div></div>
                   <div class ="row mt-3" ><div class ="col-md-12"><input  class="btn btn-primary" style = "width:100%;" value = "Submit" onclick = "add_master_bonus_panen(event)"></div></div>
                   </form>
                   <hr>
                 </div>
              
                 <div class="mb-3 mb-sm-0">
-                  <h5 class="card-title fw-semibold">Bonus Panen Fresh</h5>
+                  <h5 class="card-title fw-semibold">Bonus Panen Pekerjaan</h5>
                 </div>
                 {{-- <div id="chart"></div> --}}
                 
@@ -280,12 +279,13 @@
                 <table class="table table-bordered table-hover w-100" id = "table_bonus_panen">
                   <thead>
                   <tr>
-                    <th>Tgl Panen</th>
-                    <th>Buyer</th>
-                    <th>Lokasi Panen</th>
-                    <th>Petak Panen</th>
-                    <th>Berat (kg)</th>
-                    <th>Total Berat</th>
+                    <th>No</th>
+                    <th>Week</th>
+                    <th>Month</th>
+                    <th>Year</th>
+                    <th>Periode</th>
+                    <th>Keterangan</th>
+                    <th>Jumlah Pekerja</th>
                     <th>Total bonus</th>
                     <th>Detail</th>
                     <th>Action</th>
@@ -302,7 +302,7 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Detail Bonus Panen</h5>
+          <h5 class="modal-title">Detail Bonus Panen Pekerjaan</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -329,7 +329,7 @@
           <form id = "add_bonus_panen">
             @csrf
           <div class ="row mt-2" style = "width:100%;">
-            <div class = "col-md-6">
+            <div class = "col-md-12">
               <label>Choose Employee</label> 
           
               <select class = "form-control" name = "input_employee">
@@ -338,13 +338,19 @@
                 @endforeach
               </select>
             </div>
-            <div class = "col-md-6">
-              <label>Bonus</label> 
-              <input class = "form-control" name = "input_bonus">
-            </div>
+    
           
           </div>
-      
+          <div class ="row mt-2" style = "width:100%;">
+            <div class = "col-md-6">
+              <label>Jumlah Hari</label> 
+              <input class = "form-control" name = "input_jumlah_hari">
+            </div>
+            <div class = "col-md-6">
+              <label>Bonus Per Day</label> 
+              <input class = "form-control" name = "input_bonus_per_day">
+            </div>
+          </div>
           <div class ="row mt-3" style = "width:100%;">
             <div class = "col-md-12">
             <button class = "btn btn-primary w-100" onclick = "addbonuspanen(event)">Add Bonus</button>
@@ -357,8 +363,10 @@
               <tr>
                 <th>Name</th>
                 <th>Division</th>
-                <th>Bonus</th>
-                <th>Action</th>
+                <th>Work Duration</th>
+                <th>Bonus (Day)</th>
+                <th>Take Home Pay</th>
+                {{-- <th>Action</th> --}}
               </tr>
             </thead>
             </table>
@@ -453,42 +461,53 @@
       processing: true,
       serverSide: true,
       ajax: {
-        url: '{{route('listbonuspanen')}}',
+        url: '{{route('list_bonus_panen_pekerjaan')}}',
         data : {
        
         }
       },
       columns: [
         {
-           data: 'panen_date',
+           render: function (data, type, row, meta) {
+             return meta.row + meta.settings._iDisplayStart + 1;
+           },
+        },
+        {
+           data: 'week',
            render: function(data,type,row) {
-                    data = '<span id = "list_bonus_panen_tanggal_panen_'+row.id+'">'+data+'</span>';
+                    data = '<span id = "week_'+row.id+'">'+data+'</span>';
                     return data;}
         },
         {
-           data: 'buyer',
+           data: 'month',
            render: function(data,type,row) {
-                    data = '<span id = "list_bonus_panen_buyer_'+row.id+'">'+data+'</span>';
+                    data = '<span id = "month_'+row.id+'">'+data+'</span>';
                     return data;}
         },
         {
-           data: 'panen_location',
+           data: 'year',
            render: function(data,type,row) {
-                    data = '<span id = "list_bonus_panen_lokasi_panen_'+row.id+'">'+data+'</span>';
+                    data = '<span id = "year_'+row.id+'">'+data+'</span>';
                     return data;}
         },
         {
-           data: 'panen_petak',
+           data: 'periode',
            render: function(data,type,row) {
-                    data = '<span id = "list_bonus_panen_petak_panen_'+row.id+'">'+data+'</span>';
+                    data = '<span id = "periode_'+row.id+'">'+data+'</span>';
                     return data;}
            
         },
         {
-           data: 'weight'
+           data: 'keterangan',
+           render: function(data,type,row) {
+                    data = '<span id = "keterangan_'+row.id+'">'+data+'</span>';
+                    return data;}
         },
         {
-           data: 'total_weight'
+           data: 'jumlahpekerja_detail',
+           render: function(data,type,row) {
+                    data = '<span id = "jumlahpekerjadetail_'+row.id+'">'+data+'</span>';
+                    return data;}
         },
         {
            data: 'jumlahtotal'
@@ -515,16 +534,18 @@
     e.preventDefault();
     $.ajax({
     type: "post",
-    url: "{{ route('addbonuspanen') }}",
+    url: "{{ route('add_master_bonus_panen_pekerjaan') }}",
     data: formData,
     dataType: "json",
     success: function (response) {
            Swal.fire(
             'Data Created',
-              "Add Detail Bonus Panen Hidup added Successfuly",
+              "Add Detail Bonus Panen Pekerjaan added Successfuly",
               'success'
             );
             $('#table_bonus_detail_panen').DataTable().ajax.reload();
+            $('#table_bonus_panen').DataTable().ajax.reload();
+            
             $('#add_bonus_panen')[0].reset();
     }
   });
@@ -543,17 +564,12 @@
     $("#gantiisianlokasipanen").text(lokasipanen);
     $("#gantiisianpetakpanen").text(petakpanen);
 
-    
-
-
-
-
     $('#table_bonus_detail_panen').DataTable().destroy();
     $('#table_bonus_detail_panen').DataTable({
       processing: true,
       serverSide: true,
       ajax: {
-        url: '{{route('listdetailbonuspanen')}}',
+        url: '{{route('listdetailbonuspanenperkerjaan')}}',
         data : {
           "id_month_panen" : id_bonus_panen 
         }
@@ -565,15 +581,22 @@
         },
         {
            data: 'devisi'
+           
         },
         {
-           data: 'bonus'
+           data: 'jumlah_hari'
         },
         {
-           "render": function ( data, type, row ) {
-             return '-'
-           }
+           data: 'bonus_per_day'
+        },
+        {
+           data: 'take_home_pay'
         }
+        // {
+        //    "render": function ( data, type, row ) {
+        //      return '-'
+        //    }
+        // }
       ],
     });
   }
@@ -587,13 +610,13 @@
     e.preventDefault();
     $.ajax({
     type: "post",
-    url: "{{ route('add_master_bonus_panen_fresh') }}",
+    url: "{{ route('add_mastermonth_bonus_panen_pekerjaan') }}",
     data: $('#addbonuspanen').serialize(),
     dataType: "json",
     success: function (response) {
            Swal.fire(
-              'Bonus Panen Fresh Created',
-              "Bonus Panen Fresh Successfuly",
+              'Bonus Panen Pekerjaan Created',
+              "Bonus Panen Pekerjaan Successfuly",
               'success'
             );
             $('#addbonuspanen')[0].reset();
