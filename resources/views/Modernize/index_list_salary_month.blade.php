@@ -358,17 +358,47 @@
             render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         },
         {
-           data: 'detail'
+           data: 'checked_status',
+           render: function(data,type,row) {
+                    var color = "red";
+                    if(data == "checked"){
+                      color = "green";
+                    }
+                    data = '<span id = "list_bonus_panen_tanggal_panen_'+row.id+'" style = "color:'+color+'">'+data+'</span>';
+                  
+                    return data;}
         },
         {
-           "render": function ( data, type, row ) {
-             return '<button class="btn btn-primary btn-sm" onclick="lihatdetail('+row.id+')">Lihat</button>'
-           }
+          data : "button"
         }
       ],
     });
 
   });
+  function changestatuschecked(id){
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+        type: "post",
+        url: "{{ route('changestatus_list_salary') }}",
+        data: {
+                "myid" : id
+        },
+        dataType: "json",
+        success: function (response) {
+              Swal.fire(
+                  'Status Changed',
+                  "Status Changed Successfuly",
+                  'success'
+                );
+                // $('#addperiode')[0].reset();
+                $('#table_list_salary').DataTable().ajax.reload();
+        }
+      });
+  }
   function lihatdetail(myid){
     location.replace("{{url('/indexdetailsalary')}}/"+myid);
   }

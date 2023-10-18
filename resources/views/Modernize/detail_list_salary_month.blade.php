@@ -235,7 +235,7 @@
               <div class="card-body">
                 <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
                   <div class="mb-3 mb-sm-0">
-                    <h5 class="card-title fw-semibold">Detail Salary </h5>
+                    <h5 class="card-title fw-semibold">Detail Salary   </h5>
            
                   </div>
                   <span class = "mb-3" style = "float:right;" onclick = "showhide()" style = "cursor:pointer !important;"> Hide / Show</span>
@@ -249,6 +249,7 @@
                   </div> --}}
                 </div>
                 <div>
+                  @if($check_status[0]->checked_status == "notchecked")
                   <form id = "addperiode">
                     @csrf
                     <div class ="row mt-2">
@@ -273,6 +274,7 @@
                   </div>
                   <div class ="row mt-3" ><input  class="btn btn-primary" style = "width:100%;" value = "Submit" onclick = "addmonth(event)"></div>
                   </form>
+                  @endif
                 </div>
                 <br><br>
                 <div class="mb-3 mb-sm-0">
@@ -297,6 +299,7 @@
                     <th>Take Home Pay</th>
                     <th>Tunjangan</th>
                     <th>Total</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 </table>
@@ -311,12 +314,13 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Detail Bonus Panen</h5>
+          <h5 class="modal-title">Detail Bonus Panen   </h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body" >
+        
           <div class ="row" style = "width:100%;">
               <div class = "col-md-6">
                 Tanggal Panen : <br><span id = "gantiisiantanggalpanen" style = "font-weight:bold;"></span>
@@ -335,6 +339,8 @@
             </div>
           </div>
           <hr>
+       
+       
           <form id = "add_bonus_panen">
             @csrf
           <div class ="row mt-2" style = "width:100%;">
@@ -373,6 +379,7 @@
             </table>
           </div>
           </form>
+      
         </div>
         <div class="modal-footer">
           {{-- <button type="button" class="btn btn-primary">Save changes</button>
@@ -489,6 +496,11 @@
            data: 'total',
            render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         }
+        ,
+        {
+           data: 'button_delete',
+        }
+        
       ],
     });
     // $('#table_bonus_panen').DataTable({
@@ -546,6 +558,27 @@
     //   ],
     // });
   });
+
+  function deletedetail(myid){
+        $.ajax({
+        type: "post",
+        url: "{{ route('delete_row_detail_salary') }}",
+        headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+        data: {
+                id_detail : myid
+        },
+        dataType: "json",
+        success: function (response) {
+              Swal.fire(
+                  'Success',
+                  "Data deleted Successfuly",
+                  'success'
+                );
+                $('#table_list_salary').DataTable().ajax.reload();
+           
+        }
+      });
+  }
 
  
  

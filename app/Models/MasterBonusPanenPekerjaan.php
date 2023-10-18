@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $keterangan
  * @property int $jumlah_pekerja
  * @property int $total_bonus
+ * @property string $checked_status
  * @property string $detail
  *
  * @package App\Models
@@ -44,6 +45,7 @@ class MasterBonusPanenPekerjaan extends Model
 		'keterangan',
 		'jumlah_pekerja',
 		'total_bonus',
+		'checked_status',
 		'detail'
 	];
 }

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $username
  * @property string $password
  * @property string $name
+ * @property string $user_roles
  *
  * @package App\Models
  */
@@ -30,6 +31,7 @@ class MasterAdmin extends Model
 	protected $fillable = [
 		'username',
 		'password',
-		'name'
+		'name',
+		'user_roles'
 	];
 }

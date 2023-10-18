@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $weight
  * @property int $total_weight
  * @property int $total_bonus
+ * @property string $checked_status
  * @property string $detail
  *
  * @package App\Models
@@ -47,6 +48,7 @@ class MasterBonusPanenLive extends Model
 		'weight',
 		'total_weight',
 		'total_bonus',
+		'checked_status',
 		'detail'
 	];
 }

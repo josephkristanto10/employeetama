@@ -106,7 +106,14 @@ class EmployeeController extends Controller
         DB::select(
             DB::raw("select master_month.*, ifNULL(SUM(detail_month.total),0) as jumlahtotal, DATE_FORMAT( master_month.incoming_cash_date, '%d %b %Y') as tanggal_kas_masuk, IFNULL(((master_month.beginning_balance+incoming_cash) - SUM(detail_month.total)), master_month.beginning_balance)  as total_remaining_balance  from master_month left join detail_month on `detail_month`.`id_master_month` = `master_month`.`id` group by `master_month`.`id`")
         );
-        return DataTables::of($data)->make(true);
+        return DataTables::of($data)->addColumn('button', function ($data) {
+            $mydata = "";
+            if($data->checked_status == "notchecked"){
+                $mydata .= "<button style = 'width:100%;text-align:left;background-color:#4CAF50' class='btn btn-success btn-sm' onclick = 'changestatuschecked(".$data->id.")'>Check</button><br><br>";
+            }
+            $mydata .= '<button class="btn btn-primary btn-sm" style = "width:100%;" onclick="lihatdetail('.$data->id.')">Lihat</button>';
+            return $mydata;
+        })->escapeColumns([])->make(true);
     }
     public function delimiter_replace($number, $delimiter){
       
@@ -181,9 +188,10 @@ class EmployeeController extends Controller
     public function indexdetailsalary(Request $request){
         if(session("login")){
             $id = $request->id;
+            $check_status = MasterMonth::find($id)->get();
             $list_employee=DB::select('SELECT * FROM master_employee where master_employee.id not in (select detail_month.id_employee from detail_month where detail_month.id_master_month = '.$id.')');
             $list_all_employee = MasterEmployee::all();
-            return view("Modernize.detail_list_salary_month", compact("id",'list_employee','list_all_employee'));
+            return view("Modernize.detail_list_salary_month", compact("id",'list_employee','list_all_employee','check_status'));
         }
         else{
             return redirect('/Login');
@@ -191,10 +199,22 @@ class EmployeeController extends Controller
     }
     public function detailsalary(Request $request){
         $id_month_salary = $request->id_month;
-        $data = DetailMonth::select('*')
+        $check_checked_status = MasterMonth::where("id",$id_month_salary)->where('checked_status','notchecked')->count();
+        $data = DetailMonth::select('*', 'detail_month.id as id_per_detail')
                             ->join('master_employee','master_employee.id','=','detail_month.id_employee')
+                            ->join('master_month','master_month.id','=','detail_month.id_master_month')
                             ->where("detail_month.id_master_month", $id_month_salary)->get();
-        return DataTables::of($data)->make(true);
+        return DataTables::of($data)->addColumn('button_delete', function ($data) {
+            $mydata = "";
+            if($data->checked_status == "notchecked"){
+                $mydata .= "<button style = 'width:100%;text-align:left;background-color:red;border:0px;' class='btn btn-success btn-sm' onclick = 'deletedetail(".$data->id_per_detail.")'><span class='glyphicon glyphicon-trash' style = 'color:white'></span>Delete</button><br><br>";
+            }
+            if($data->checked_status == "checked"){
+            $mydata .= '<button class="btn btn-primary btn-sm" style = "width:100%;background-color:green;border:0px;" >Checked</button>';
+
+            }
+            return $mydata;
+        })->escapeColumns([])->make(true);
     }
     /**
      * Show the form for creating a new resource.
@@ -230,24 +250,37 @@ class EmployeeController extends Controller
     }
     public function list_panen_bonus(Request $request){
         $id_month_salary = $request->id_month;
-        // $data = MasterBonusPanen::select('*')->where("id_master_month", $id_month_salary)->get();
-        // $data = MasterBonusPanen::select(DB::raw('master_bonus_panen.*, SUM("detail_bonus_panen.bonus") as jumlahtotal'))
-        //         ->leftJoin('detail_bonus_panen','detail_bonus_panen.id_master_bonus_panen','=','master_bonus_panen.id')
-        //         ->groupBy('master_bonus_panen.id')->get();
         $data  =
         DB::select(
             DB::raw('
             select master_bonus_panen.*, ifnull(SUM(detail_bonus_panen.bonus),0) as jumlahtotal from `master_bonus_panen` left join `detail_bonus_panen` on `detail_bonus_panen`.`id_master_bonus_panen` = `master_bonus_panen`.`id` group by `master_bonus_panen`.`id`;
             ')
         );
-        return DataTables::of($data)->make(true);
+        return DataTables::of($data)->addColumn('button', function ($data) {
+            $mydata = "";
+            if($data->checked_status == "notchecked"){
+                $mydata .= "<button style = 'width:100%;text-align:left;background-color:#4CAF50' class='btn btn-success btn-sm' onclick = 'changestatuschecked(".$data->id.")'>Check</button><br><br>";
+            }
+            $mydata .= '<button class="btn btn-primary btn-sm" style = "width:100%;" onclick="lihatdetail('.$data->id.')" data-toggle = "modal" data-target="#modal_bonus_panen">Lihat</button>';
+            return $mydata;
+        })->escapeColumns([])->make(true);
   
     }
     public function listdetailbonuspanenperkerjaan(Request $request){
         
         $id_panen = $request->id_month_panen;
-        $detailbonuspanen = DetailBonusPanenPekerjaan::join('master_employee', "master_employee.id",'=',"detail_bonus_panen_pekerjaan.id_employee")->select("*")->where("id_master_bonus_panen_pekerjaan", $id_panen)->get();
-        return DataTables::of($detailbonuspanen)->make(true);
+        $detailbonuspanen = DetailBonusPanenPekerjaan::join('master_employee', "master_employee.id",'=',"detail_bonus_panen_pekerjaan.id_employee")->join('master_bonus_panen_pekerjaan','master_bonus_panen_pekerjaan.id','=','detail_bonus_panen_pekerjaan.id_master_bonus_panen_pekerjaan')->select("*","detail_bonus_panen_pekerjaan.id as id_detail_bonus_panen_pekerjaan")->where("id_master_bonus_panen_pekerjaan", $id_panen)->get();
+        return DataTables::of($detailbonuspanen)->addColumn('button_delete', function ($detailbonuspanen) {
+            $mydata = "";
+            if($detailbonuspanen->checked_status == "notchecked"){
+                $mydata .= "<button style = 'width:100%;text-align:left;background-color:red;border:0px;' class='btn btn-success btn-sm' type = 'button' onclick = 'deletedetail(".$detailbonuspanen->id_detail_bonus_panen_pekerjaan.")'><span class='glyphicon glyphicon-trash' style = 'color:white'></span>Delete</button><br><br>";
+            }
+            if($detailbonuspanen->checked_status == "checked"){
+            $mydata .= '<button class="btn btn-primary btn-sm" style = "width:100%;background-color:green;border:0px;" type = "button" >Checked</button>';
+
+            }
+            return $mydata;
+        })->escapeColumns([])->make(true);
     }
     public function list_bonus_panen_pekerjaan(Request $request){
  
@@ -257,7 +290,14 @@ class EmployeeController extends Controller
             select master_bonus_panen_pekerjaan.*,count(detail_bonus_panen_pekerjaan.id) as jumlahpekerja_detail, SUM(detail_bonus_panen_pekerjaan.take_home_pay) as jumlahtotal from `master_bonus_panen_pekerjaan` left join `detail_bonus_panen_pekerjaan` on `detail_bonus_panen_pekerjaan`.`id_master_bonus_panen_pekerjaan` = `master_bonus_panen_pekerjaan`.`id` group by `master_bonus_panen_pekerjaan`.`id`;
             ')
         );
-        return DataTables::of($data)->make(true);
+        return DataTables::of($data)->addColumn('button', function ($data) {
+            $mydata = "";
+            if($data->checked_status == "notchecked"){
+                $mydata .= "<button style = 'width:100%;text-align:left;background-color:#4CAF50' class='btn btn-success btn-sm' onclick = 'changestatuschecked(".$data->id.")'>Check</button><br><br>";
+            }
+            $mydata .= '<button class="btn btn-primary btn-sm" style = "width:100%;" onclick="lihatdetail('.$data->id.')" data-toggle = "modal" data-target="#modal_bonus_panen">Lihat</button>';
+            return $mydata;
+        })->escapeColumns([])->make(true);
   
     }
     public function add_mastermonth_bonus_panen_pekerjaan(Request $request){
@@ -279,13 +319,34 @@ class EmployeeController extends Controller
     }
     public function list_detail_bonus_panen(Request $request){
         $id_panen = $request->id_month_panen;
-        $detailbonuspanen = DetailBonusPanen::join('master_employee', "master_employee.id",'=',"detail_bonus_panen.id_employee")->select("*")->where("id_master_bonus_panen", $id_panen)->get();
-        return DataTables::of($detailbonuspanen)->make(true);
+        
+        $detailbonuspanen = DetailBonusPanen::join('master_employee', "master_employee.id",'=',"detail_bonus_panen.id_employee")->join('master_bonus_panen','master_bonus_panen.id','=','detail_bonus_panen.id_master_bonus_panen')->select("*","detail_bonus_panen.id as id_detail_bonus_panen")->where("id_master_bonus_panen", $id_panen)->get();
+        return DataTables::of($detailbonuspanen)->addColumn('button_delete', function ($detailbonuspanen) {
+            $mydata = "";
+            if($detailbonuspanen->checked_status == "notchecked"){
+                $mydata .= "<button style = 'width:100%;text-align:left;background-color:red;border:0px;' class='btn btn-success btn-sm' type = 'button' onclick = 'deletedetail(".$detailbonuspanen->id_detail_bonus_panen.")'><span class='glyphicon glyphicon-trash' style = 'color:white'></span>Delete</button><br><br>";
+            }
+            if($detailbonuspanen->checked_status == "checked"){
+            $mydata .= '<button class="btn btn-primary btn-sm" style = "width:100%;background-color:green;border:0px;" type = "button" >Checked</button>';
+
+            }
+            return $mydata;
+        })->escapeColumns([])->make(true);
     }
     public function list_detail_bonus_panen_hidup(Request $request){
         $id_panen = $request->id_month_panen;
-        $detailbonuspanen = DetailBonusPanenLive::join('master_employee', "master_employee.id",'=',"detail_bonus_panen_live.id_employee")->select("*")->where("id_master_bonus_panen", $id_panen)->get();
-        return DataTables::of($detailbonuspanen)->make(true);
+        $detailbonuspanen = DetailBonusPanenLive::join('master_employee', "master_employee.id",'=',"detail_bonus_panen_live.id_employee")->join('master_bonus_panen_live','master_bonus_panen_live.id','=','detail_bonus_panen_live.id_master_bonus_panen')->select("*","detail_bonus_panen_live.id as id_detail_bonus_panen_live")->where("id_master_bonus_panen", $id_panen)->get();
+        return DataTables::of($detailbonuspanen)->addColumn('button_delete', function ($detailbonuspanen) {
+            $mydata = "";
+            if($detailbonuspanen->checked_status == "notchecked"){
+                $mydata .= "<button style = 'width:100%;text-align:left;background-color:red;border:0px;' class='btn btn-success btn-sm' type = 'button' onclick = 'deletedetail(".$detailbonuspanen->id_detail_bonus_panen_live.")'><span class='glyphicon glyphicon-trash' style = 'color:white'></span>Delete</button><br><br>";
+            }
+            if($detailbonuspanen->checked_status == "checked"){
+            $mydata .= '<button class="btn btn-primary btn-sm" style = "width:100%;background-color:green;border:0px;" type = "button" >Checked</button>';
+
+            }
+            return $mydata;
+        })->escapeColumns([])->make(true);
     }
     public function  list_panen_bonus_hidup(Request $request){
         $id_month_salary = $request->id_month;
@@ -299,7 +360,14 @@ class EmployeeController extends Controller
             select master_bonus_panen_live.*, ifnull(SUM(detail_bonus_panen_live.bonus),0) as jumlahtotal from `master_bonus_panen_live` left join `detail_bonus_panen_live` on `detail_bonus_panen_live`.`id_master_bonus_panen` = `master_bonus_panen_live`.`id` group by `master_bonus_panen_live`.`id`;
             ')
         );
-        return DataTables::of($data)->make(true);
+        return DataTables::of($data)->addColumn('button', function ($data) {
+            $mydata = "";
+            if($data->checked_status == "notchecked"){
+                $mydata .= "<button style = 'width:100%;text-align:left;background-color:#4CAF50' class='btn btn-success btn-sm' onclick = 'changestatuschecked(".$data->id.")'>Check</button><br><br>";
+            }
+            $mydata .= '<button class="btn btn-primary btn-sm" style = "width:100%;" onclick="lihatdetail('.$data->id.')" data-toggle = "modal" data-target="#modal_bonus_panen">Lihat</button>';
+            return $mydata;
+        })->escapeColumns([])->make(true);
     }
     // public function  list_panen_bonus_pekerjaan(Request $request){
     //     $id_month_salary = $request->id_month;
@@ -402,6 +470,76 @@ class EmployeeController extends Controller
         ]);
     }
     
+    public function change_status_list_salary(Request $request){
+        $id = $request->myid;
+        MasterMonth::where('id',$id)->update(['checked_status'=>'checked']);
+        return response()->json([
+            'message' => "Success",
+            'status' =>200
+        ]);
+    }
+    public function change_status_bonus_panen(Request $request){
+        $id = $request->myid;
+        MasterBonusPanen::where('id',$id)->update(['checked_status'=>'checked']);
+        return response()->json([
+            'message' => "Success",
+            'status' =>200
+        ]);
+    }
+    public function change_status_bonus_panen_live(Request $request){
+        $id = $request->myid;
+        MasterBonusPanenLive::where('id',$id)->update(['checked_status'=>'checked']);
+        return response()->json([
+            'message' => "Success",
+            'status' =>200
+        ]);
+    }
+    public function change_status_bonus_panen_pekerjaan(Request $request){
+        $id = $request->myid;
+        MasterBonusPanenPekerjaan::where('id',$id)->update(['checked_status'=>'checked']);
+        return response()->json([
+            'message' => "Success",
+            'status' =>200
+        ]);
+    }
+    public function delete_row_detail_salary(Request $request){
+        $id = $request->id_detail;
+        $deleterow = DetailMonth::find($id);
+        $deleterow->delete();
+        return response()->json([
+            'message' => "Success",
+            'status' =>200
+        ]);
+    }
+    public function delete_row_detail_bonus_panen(Request $request){
+        $id = $request->id_detail;
+        $deleterow = DetailBonusPanen::find($id);
+        $deleterow->delete();
+        return response()->json([
+            'message' => "Success",
+            'status' =>200
+        ]);
+    }
+    public function delete_row_detail_bonus_panen_live(Request $request){
+        $id = $request->id_detail;
+        $deleterow = DetailBonusPanenLive::find($id);
+        $deleterow->delete();
+        return response()->json([
+            'message' => "Success",
+            'status' =>200
+        ]);
+    }
+    public function delete_row_detail_bonus_panen_pekerjaan(Request $request)
+    {
+        $id = $request->id_detail;
+        $deleterow = DetailBonusPanenPekerjaan::find($id);
+        $deleterow->delete();
+        return response()->json([
+            'message' => "Success",
+            'status' =>200
+        ]);
+    }
+
     public function create()
     {
         //

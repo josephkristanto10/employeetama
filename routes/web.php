@@ -50,3 +50,14 @@ Route::post("add_master_bonus_panen", [EmployeeController::class,"add_master_bon
 Route::post("add_bonus_panen", [EmployeeController::class,"add_bonus_panen"])->name("addbonuspanen");
 Route::post("add_bonus_panen_live", [EmployeeController::class,"add_bonus_panen_live"])->name("addbonuspanen_live");
 Route::post("add_mastermonth_bonus_panen_pekerjaan", [EmployeeController::class,"add_mastermonth_bonus_panen_pekerjaan"])->name("add_mastermonth_bonus_panen_pekerjaan");
+
+
+Route::post("change_status_list_salary", [EmployeeController::class,"change_status_list_salary"])->name("changestatus_list_salary");
+Route::post("change_status_bonus_panen", [EmployeeController::class,"change_status_bonus_panen"])->name("change_status_bonus_panen");
+Route::post("change_status_bonus_panen_live", [EmployeeController::class,"change_status_bonus_panen_live"])->name("change_status_bonus_panen_live");
+Route::post("change_status_bonus_panen_pekerjaan", [EmployeeController::class,"change_status_bonus_panen_pekerjaan"])->name("change_status_bonus_panen_pekerjaan");
+
+Route::post("delete_row_detail_salary", [EmployeeController::class,"delete_row_detail_salary"])->name("delete_row_detail_salary");
+Route::post("delete_row_detail_bonus_panen", [EmployeeController::class,"delete_row_detail_bonus_panen"])->name("delete_row_detail_bonus_panen");
+Route::post("delete_row_detail_bonus_panen_live", [EmployeeController::class,"delete_row_detail_bonus_panen_live"])->name("delete_row_detail_bonus_panen_live");
+Route::post("delete_row_detail_bonus_panen_pekerjaan", [EmployeeController::class,"delete_row_detail_bonus_panen_pekerjaan"])->name("delete_row_detail_bonus_panen_pekerjaan");

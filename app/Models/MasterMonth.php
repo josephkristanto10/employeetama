@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $incoming_cash_date
  * @property int|null $cash_total
  * @property int|null $remaining_balance
+ * @property string $checked_status
  * @property string|null $detail
  *
  * @package App\Models
@@ -55,6 +56,7 @@ class MasterMonth extends Model
 		'incoming_cash_date',
 		'cash_total',
 		'remaining_balance',
+		'checked_status',
 		'detail'
 	];
 }

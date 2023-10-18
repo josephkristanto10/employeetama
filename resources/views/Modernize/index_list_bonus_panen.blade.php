@@ -234,20 +234,14 @@
             <div class="card w-100">
               <div class="card-body">
                 <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
+                 
                   <div class="mb-3 mb-sm-0">
                     {{-- <h5 class="card-title fw-semibold">Add Bonus Pane Salary </h5> --}}
                     <h5 class="card-title fw-semibold">Add Bonus Panen Fresh </h5>
 
                   </div>
                   <span class = "mb-3" style = "float:right;" onclick = "showhide()" style = "cursor:pointer !important;"> Hide / Show</span>
-                  {{-- <div>
-                    <select class="form-select">
-                      <option value="1">March 2023</option>
-                      <option value="2">April 2023</option>
-                      <option value="3">May 2023</option>
-                      <option value="4">June 2023</option>
-                    </select>
-                  </div> --}}
+                 
                 </div>
         
                 <div>
@@ -495,12 +489,22 @@
            render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' ),
         },
         {
-          data: 'detail'
+          data: 'checked_status',
+           render: function(data,type,row) {
+                    var color = "red";
+                    if(data == "checked"){
+                      color = "green";
+                    }
+                    data = '<span class = "checked_status_'+row.id+'" id = "list_bonus_panen_tanggal_panen_'+row.id+'" style = "color:'+color+'">'+data+'</span>';
+                  
+                    return data;}
+          
         },
         {
-           "render": function ( data, type, row ) {
-             return '<button class="btn btn-primary btn-sm" onclick="lihatdetail('+row.id+')" data-toggle = "modal" data-target="#modal_bonus_panen" >Lihat</button>'
-           }
+          data: 'button'
+          //  "render": function ( data, type, row ) {
+          //    return '<button class="btn btn-primary btn-sm" onclick="lihatdetail('+row.id+')" data-toggle = "modal" data-target="#modal_bonus_panen" >Lihat</button>'
+          //  }
         }
       ],
     });
@@ -526,6 +530,7 @@
               'success'
             );
             $('#table_bonus_detail_panen').DataTable().ajax.reload();
+            $('#table_bonus_panen').DataTable().ajax.reload();
             $('#add_bonus_panen')[0].reset();
     }
   });
@@ -533,7 +538,15 @@
   
   
   function lihatdetail(myid){
-     id_bonus_panen = myid;
+    id_bonus_panen = myid;
+    var check_status = $(".checked_status_"+myid).text();
+    if(check_status == "checked"){
+      $("#add_bonus_panen button").attr("disabled",'disabled');
+     
+    }
+    else{
+      $("#add_bonus_panen button").removeAttr('disabled');
+    }
     var tanggalpanen = $("#list_bonus_panen_tanggal_panen_"+myid).text(); 
     var buyer = $("#list_bonus_panen_buyer_"+myid).text(); 
     var lokasipanen = $("#list_bonus_panen_lokasi_panen_"+myid).text(); 
@@ -543,11 +556,6 @@
     $("#gantiisianbuyer").text(buyer);
     $("#gantiisianlokasipanen").text(lokasipanen);
     $("#gantiisianpetakpanen").text(petakpanen);
-
-    
-
-
-
 
     $('#table_bonus_detail_panen').DataTable().destroy();
     $('#table_bonus_detail_panen').DataTable({
@@ -572,9 +580,7 @@
            render: $.fn.dataTable.render.number( '.', '.', 0, 'Rp' )
         },
         {
-           "render": function ( data, type, row ) {
-             return '-'
-           }
+            data:'button_delete'
         }
       ],
     });
@@ -584,7 +590,53 @@
     location.replace("{{url('/listemployee')}}");
   }
 
-  
+ 
+  function changestatuschecked(id){
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+        type: "post",
+        url: "{{ route('change_status_bonus_panen') }}",
+        data: {
+                "myid" : id
+        },
+        dataType: "json",
+        success: function (response) {
+              Swal.fire(
+                  'Status Changed',
+                  "Status Changed Successfuly",
+                  'success'
+                );
+                // $('#addperiode')[0].reset();
+                $('#table_bonus_panen').DataTable().ajax.reload();
+        }
+      });
+  }
+
+  function deletedetail(myid){
+        $.ajax({
+        type: "post",
+        url: "{{ route('delete_row_detail_bonus_panen') }}",
+        headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+        data: {
+                id_detail : myid
+        },
+        dataType: "json",
+        success: function (response) {
+              Swal.fire(
+                  'Success',
+                  "Data deleted Successfuly",
+                  'success'
+                );
+                $('#table_bonus_detail_panen').DataTable().ajax.reload();
+                $('#table_bonus_panen').DataTable().ajax.reload();
+        }
+      });
+  }
+
   function add_master_bonus_panen(e){
     e.preventDefault();
     $.ajax({
