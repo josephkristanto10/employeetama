@@ -25,7 +25,7 @@ class LoginController extends Controller
         
         $checkadmin = MasterAdmin::where("username",$myusername)->where("password",$mypassword)->first();
         if($checkadmin){
-            session()->put("login", "admin");
+            session()->put("login", $checkadmin->user_roles);
             return response()->json([
                 'message' => "Welcome Admin",
                 'status' =>"berhasil"

@@ -108,7 +108,7 @@ class EmployeeController extends Controller
         );
         return DataTables::of($data)->addColumn('button', function ($data) {
             $mydata = "";
-            if($data->checked_status == "notchecked"){
+            if($data->checked_status == "notchecked" && session('login') == "admin"){
                 $mydata .= "<button style = 'width:100%;text-align:left;background-color:#4CAF50' class='btn btn-success btn-sm' onclick = 'changestatuschecked(".$data->id.")'>Check</button><br><br>";
             }
             $mydata .= '<button class="btn btn-primary btn-sm" style = "width:100%;" onclick="lihatdetail('.$data->id.')">Lihat</button>';
@@ -258,7 +258,7 @@ class EmployeeController extends Controller
         );
         return DataTables::of($data)->addColumn('button', function ($data) {
             $mydata = "";
-            if($data->checked_status == "notchecked"){
+            if($data->checked_status == "notchecked" && session('login') == "admin"){
                 $mydata .= "<button style = 'width:100%;text-align:left;background-color:#4CAF50' class='btn btn-success btn-sm' onclick = 'changestatuschecked(".$data->id.")'>Check</button><br><br>";
             }
             $mydata .= '<button class="btn btn-primary btn-sm" style = "width:100%;" onclick="lihatdetail('.$data->id.')" data-toggle = "modal" data-target="#modal_bonus_panen">Lihat</button>';
@@ -292,7 +292,7 @@ class EmployeeController extends Controller
         );
         return DataTables::of($data)->addColumn('button', function ($data) {
             $mydata = "";
-            if($data->checked_status == "notchecked"){
+            if($data->checked_status == "notchecked" && session('login') == "admin"){
                 $mydata .= "<button style = 'width:100%;text-align:left;background-color:#4CAF50' class='btn btn-success btn-sm' onclick = 'changestatuschecked(".$data->id.")'>Check</button><br><br>";
             }
             $mydata .= '<button class="btn btn-primary btn-sm" style = "width:100%;" onclick="lihatdetail('.$data->id.')" data-toggle = "modal" data-target="#modal_bonus_panen">Lihat</button>';
@@ -362,7 +362,7 @@ class EmployeeController extends Controller
         );
         return DataTables::of($data)->addColumn('button', function ($data) {
             $mydata = "";
-            if($data->checked_status == "notchecked"){
+            if($data->checked_status == "notchecked" && session('login') == "admin"){
                 $mydata .= "<button style = 'width:100%;text-align:left;background-color:#4CAF50' class='btn btn-success btn-sm' onclick = 'changestatuschecked(".$data->id.")'>Check</button><br><br>";
             }
             $mydata .= '<button class="btn btn-primary btn-sm" style = "width:100%;" onclick="lihatdetail('.$data->id.')" data-toggle = "modal" data-target="#modal_bonus_panen">Lihat</button>';
