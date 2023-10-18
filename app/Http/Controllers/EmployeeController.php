@@ -188,7 +188,7 @@ class EmployeeController extends Controller
     public function indexdetailsalary(Request $request){
         if(session("login")){
             $id = $request->id;
-            $check_status = MasterMonth::find($id)->get();
+            $check_status = MasterMonth::where('id',$id)->get();
             $list_employee=DB::select('SELECT * FROM master_employee where master_employee.id not in (select detail_month.id_employee from detail_month where detail_month.id_master_month = '.$id.')');
             $list_all_employee = MasterEmployee::all();
             return view("Modernize.detail_list_salary_month", compact("id",'list_employee','list_all_employee','check_status'));

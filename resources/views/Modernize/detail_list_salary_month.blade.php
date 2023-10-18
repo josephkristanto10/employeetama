@@ -253,7 +253,8 @@
                   <form id = "addperiode">
                     @csrf
                     <div class ="row mt-2">
-                      <div class = "col-md-6">Employee <br> <select class = "form-control" name = "input_id_employee">
+                      <div class = "col-md-6">Employee
+                        <br> <select class = "form-control" name = "input_id_employee">
                           @foreach($list_employee as $le)
                           <option value = "{{$le->id}}">{{$le->name}}</option>
                           @endforeach
