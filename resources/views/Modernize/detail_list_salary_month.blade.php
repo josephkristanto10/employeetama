@@ -261,15 +261,15 @@
                           </select>
                       </div>
                       <div class = "col-md-6">
-                        Honor (day) <br><input class = "form-control" name = "input_honor_per_day">
+                        Honor per day (Rp) <br><input class = "form-control" name = "input_honor_per_day">
                       </div>
                     </div>
                   <div class ="row mt-2">  
-                      <div class = "col-md-6">Work Duration <br><input class = "form-control" name = "input_work_duration"></div>   
-                      <div class = "col-md-6">Honor Picket Day <br><input class = "form-control" name = "input_honor_picket_day"></div>
+                      <div class = "col-md-6">Work Duration(Example : 5) <br><input class = "form-control" name = "input_work_duration"></div>   
+                      <div class = "col-md-6">Honor Picket Day (Rp) <br><input class = "form-control" name = "input_honor_picket_day"></div>
                   </div>
                   <div class ="row mt-2">  
-                  <div class ="col-md-4">Total Picket Day <br><input class = "form-control" name = "input_total_picket_day" ></div>
+                  <div class ="col-md-4">Total Picket Day (Day) <br><input class = "form-control" name = "input_total_picket_day" ></div>
                   <div class ="col-md-4">Extra <br><input class = "form-control" name = "input_extra" ></div>
                   <div class ="col-md-4">Tunjangan <br><input class = "form-control" name = "input_tunjangan" ></div>
                   </div>
